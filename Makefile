@@ -16,3 +16,6 @@ helper.o: src/helper.c includes/helper.h
 
 utils.o: src/utils.c includes/utils.h
 	$(CC) -c -I$(INCLUDES) src/utils.c -o utils.o
+
+clean: 
+	rm -f main *.o
