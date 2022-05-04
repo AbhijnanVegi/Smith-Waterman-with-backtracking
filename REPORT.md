@@ -64,6 +64,9 @@ In the following function,
 
 For ever cell of the DP matrix, we add a pointer which points to the cell which was the source for this cell. This pointer is later used for backtracking. 
 
+**Time Complexity**: $O(mn)$  
+**Space Complexity**: $O(mn)$
+
 #### Backtracking
 
 The process of backtracking is as follows:
