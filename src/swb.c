@@ -87,20 +87,20 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
         printf("(%d,%d) -> ", x+1, y+1);
         char c1 = s1[x - 1];
         char c2 = s2[y - 1];
-        switch (matrix[x][y].direction)
+        if(matrix[x][y].direction == DIAGONAL)
         {
-            case DIAGONAL:
-                x--;
-                y--;
-                break;
-            case HORIZONTAL:
-                x--;
-                c2 = '-';
-                break;
-            case VERTICAL:
-                y--;
-                c1 = '-';
-                break;
+            x--;
+            y--;
+        }
+        else if(matrix[x][y].direction == HORIZONTAL)
+        {
+            x--;
+            c2 = '-';
+        }
+        else
+        {
+            y--;
+            c1 = '-';
         }
         printf("%c %c\n", c1, c2);
     }
