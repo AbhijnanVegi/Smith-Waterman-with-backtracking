@@ -77,7 +77,20 @@ The process of backtracking is as follows:
 
 This gives us the subsequence with the highest similarity score based on the similarity system dictated by the substitution matrix and the gap penalty that is used.
 
-## Baseline Approach
+## Baseline Case
+
+### Approach
+
+- **Scoring System**: +3 if match, -3 if mismatch
+- **Gap Penalty**: 2
+- **Method**: 
+  - The DP matrix is filled in a row major fashion (each row is calculated completely before moving on to the next row)
+  - `maxScore` keeps a track of the position of the highest score in the matrix and is checked in every cell's calculation.
+  - The traceback starts from the cell with the highest score and traces back until a 0 is encountered.
+
+### Benchmarking
+
+
 
 ## Shortcomings of Baseline Approach
 
