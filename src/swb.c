@@ -39,9 +39,10 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
 
     // Initialize the scoring matrix
     // int matrix[l1 + 1][l2 + 1];
-    Score matrix[l1 + 1][l2 + 1], maxScore;
-    
-    setScore(&maxScore, 0, 0, 0, 0);
+    Score matrix[l1 + 1][l2 + 1];
+
+    // Initializing Score pointer that points to the max score
+    Score *maxScore = &matrix[0][0];
      
     for (int i = 0; i <= l1; i++)
     {
@@ -64,11 +65,11 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
             setScore(&matrix[i][j], i, j, 
                     max(match, max(delete, insert)), 
                     (match >= max(delete, insert)) ? DIAGONAL : (delete >= insert) ? HORIZONTAL : VERTICAL);
-
+            
             // checking if this is the highest score so far
-            if (matrix[i][j].score > maxScore.score)
+            if (matrix[i][j].score > maxScore->score)
             {
-                setScore(&maxScore, i, j, matrix[i][j].score, 0);
+                maxScore = &matrix[i][j];
             }
         }
     }
@@ -79,8 +80,8 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
 
     // Printing the scoring matrix with the directions
     printf("\nTraceback\n");
-    int x = maxScore.x;
-    int y = maxScore.y;
+    int x = maxScore->x;
+    int y = maxScore->y;
     while (matrix[x][y].score != 0)
     {
         printf("(%d,%d) -> ", x+1, y+1);
