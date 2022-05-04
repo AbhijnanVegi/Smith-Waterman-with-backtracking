@@ -80,9 +80,7 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
 
     // Printing the scoring matrix with the directions
     printf("\nTraceback\n");
-    int x = maxScore->x;
-    int y = maxScore->y;
-    while (matrix[x][y].score != 0)
+    for(int x = maxScore->x, y = maxScore->y; matrix[x][y].score != 0;)
     {
         printf("(%d,%d) -> ", x+1, y+1);
         char c1 = s1[x - 1];
