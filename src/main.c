@@ -3,21 +3,21 @@
 #include <string.h>
 
 #include "swb.h"
+#include "utils.h"
 
 int main(int argc, char *argv[])
 {
-    char *s1, *s2;
+    if (argc != 3)
+    {
+        printf("Usage: %s <path to file> <path to file>\n", argv[0]);
+        exit(1);
+    }
 
     printf("Smith Waterman with Backtracking\n");
     printf("---------------------------------\n");
 
-    printf("Enter the first string: ");
-    s1 = (char *)malloc(sizeof(char) * 100);
-    scanf("%s", s1);
-
-    printf("Enter the second string: ");
-    s2 = (char *)malloc(sizeof(char) * 100);
-    scanf("%s", s2);
+    char *s1 = read_fasta(argv[1]);
+    char *s2 = read_fasta(argv[2]);
 
     // Run alignment algorithm
     smith_waterman(strlen(s1), strlen(s2), s1, s2);

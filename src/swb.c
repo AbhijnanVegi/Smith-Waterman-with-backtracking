@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "swb.h"
 #include "utils.h"
@@ -38,8 +39,7 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
     printf("\nAligning Input sequences\n");
 
     // Initialize the scoring matrix
-    // int matrix[l1 + 1][l2 + 1];
-    Score matrix[l1 + 1][l2 + 1];
+    Score (*matrix)[l2+1] = (Score (*)[l2+1])malloc(sizeof(Score) * (l1 + 1) * (l2 + 1));
 
     // Initializing Score pointer that points to the max score
     Score *maxScore = &matrix[0][0];
@@ -75,31 +75,32 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
     }
 
     // Print the scoring matrix
-    printf("\nScoring Matrix\n");
-    print_mat(l1, l2, (Score*)matrix);
+    // printf("\nScoring Matrix\n");
+    // print_mat(l1, l2, (Score*)matrix);
 
     // Printing the scoring matrix with the directions
-    printf("\nTraceback\n");
-    for(int x = maxScore->x, y = maxScore->y; matrix[x][y].score != 0;)
-    {
-        printf("(%d,%d) -> ", x+1, y+1);
-        char c1 = s1[x - 1];
-        char c2 = s2[y - 1];
-        if(matrix[x][y].direction == DIAGONAL)
-        {
-            x--;
-            y--;
-        }
-        else if(matrix[x][y].direction == HORIZONTAL)
-        {
-            x--;
-            c2 = '-';
-        }
-        else
-        {
-            y--;
-            c1 = '-';
-        }
-        printf("%c %c\n", c1, c2);
-    }
+    // printf("\nTraceback\n");
+    // for(int x = maxScore->x, y = maxScore->y; matrix[x][y].score != 0;)
+    // {
+    //     printf("(%d,%d) -> ", x+1, y+1);
+    //     char c1 = s1[x - 1];
+    //     char c2 = s2[y - 1];
+    //     if(matrix[x][y].direction == DIAGONAL)
+    //     {
+    //         x--;
+    //         y--;
+    //     }
+    //     else if(matrix[x][y].direction == HORIZONTAL)
+    //     {
+    //         x--;
+    //         c2 = '-';
+    //     }
+    //     else
+    //     {
+    //         y--;
+    //         c1 = '-';
+    //     }
+    //     printf("%c %c\n", c1, c2);
+    // }
+    printf("\nScore: %d\n", maxScore->score);
 }
