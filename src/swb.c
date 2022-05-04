@@ -41,12 +41,5 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
 
     // Print the scoring matrix
     printf("\nScoring Matrix\n");
-    for (int i = 0; i <= l1; i++)
-    {
-        for (int j = 0; j <= l2; j++)
-        {
-            printf("%3d ", matrix[i][j]);
-        }
-        printf("\n");
-    }
+    print_mat(l1, l2, (int*)matrix);
 }
