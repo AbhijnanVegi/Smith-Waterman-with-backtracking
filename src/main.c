@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "helper.h"
+#include "swb.h"
 
 int main(int argc, char *argv[])
 {
-    timer t;
-
     char *s1, *s2;
 
     printf("Smith Waterman with Backtracking\n");
@@ -20,7 +19,8 @@ int main(int argc, char *argv[])
     s2 = (char *)malloc(sizeof(char) * 100);
     scanf("%s", s2);
 
-    //TODO Run the Smith-Waterman algorithm 
+    // Run alignment algorithm
+    smith_waterman(strlen(s1), strlen(s2), s1, s2);
 
     return 0;
 }
