@@ -16,7 +16,7 @@ typedef enum Direction {
 
 int score(char a, char b);
 
-void smith_waterman(int l1, int l2, char *s1, char *s2);
+void smith_waterman(char *s1, char *s2);
 void print_mat(int l1, int l2, Score *mat);
 
 

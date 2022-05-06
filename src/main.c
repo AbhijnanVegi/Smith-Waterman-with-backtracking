@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     read_fasta(argv[2], s2);
 
     // Run alignment algorithm
-    smith_waterman(strlen(s1), strlen(s2), s1, s2);
+    smith_waterman(s1, s2);
 
     return 0;
 }
