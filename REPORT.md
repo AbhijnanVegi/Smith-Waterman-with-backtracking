@@ -38,6 +38,10 @@ Let $s(i,j)$ represent the value of the cell in the $i^{th}$ row and $j^{th}$ co
 
 Let $d$ represent the gap penalty that is being used for the algorithm.
 
+The scoring system and the gap penalty for our implementation is as follows:
+- **Scoring System**: +3 if match, -3 if mismatch
+- **Gap Penalty**: 2
+
 The initialization of the DP matrix is as follows
 
 - $F(i,0) = 0  \ \forall \ 0 \leq i \leq m$
@@ -79,20 +83,56 @@ This gives us the subsequence with the highest similarity score based on the sim
 
 ## Baseline Case
 
-### Approach
-
-- **Scoring System**: +3 if match, -3 if mismatch
-- **Gap Penalty**: 2
-- **Method**: 
-  - The DP matrix is filled in a row major fashion (each row is calculated completely before moving on to the next row)
-  - `maxScore` keeps a track of the position of the highest score in the matrix and is checked in every cell's calculation.
-  - The traceback starts from the cell with the highest score and traces back until a 0 is encountered.
+### Method
+- The DP matrix is filled in a row major fashion and stored (each row is calculated completely before moving on to the next row)
+- `maxScore` keeps a track of the position of the highest score in the matrix and is checked in every cell's calculation.
+- The traceback starts from the cell with the highest score and traces back until a 0 is encountered.
 
 ### Benchmarking
 
+All execution times are given in ms.
 
+| Test Type | Test Name | Execution Time |
+| --------- | --------- | -------------- |
+| small     | test_1    | 2084.279       |
+| small     | test_2    | Segfault       |
+| small     | test_3    | Segfault       |
+| small     | test_4    | Segfault       |
 
-## Shortcomings of Baseline Approach
+## Shortcomings of Baseline and Scope for Optimization
 
-## Scope of Optimization
+- **No parallelization**: Not using multiple cores of your CPU or any SIMD instructions to optimize the execution of the code.
 
+- **Many cache misses**: In the current approach, we are filling in the matrix row major fashion, so for filling in each row, the elements in the current row and the previous row are accessed in the recursive function, which would lead to multiple cache misses, even more so if the row doesnt fit into cache, then each row will get cleared from cache once its computed.
+
+- **Tracebacking Problem**: Consider the case where the sequences are of size 1MB each ($10^6$ bytes), this implies that the DP matrix we need to calculate the traceback would be of size 1TB, which is an absurd amount of data that is required to be stored. Since each character from the final alignment is dependent on the current row and the previous row, the scope for optimizing the backtracking becomes extremely small as we are required to store all the rows of the matrix in order to not lose any characters from the final alignment.
+
+## Optimization
+## 1. Linear Approach
+
+### Method
+- The DP matrix is filled in a row major fashion and not stored (each row is calculated completely before moving on to the next row). Each row is stored in the `top` and `curr` variable, which is replaced while computing the next row.
+- `maxScore` keeps a track of the highest score in the matrix and is checked in every cell's calculation.
+
+### Benchmarking
+
+| Test Type | Test Name | Execution Time |
+| --------- | --------- | -------------- |
+| small     | test_1    |  347.928      |
+| small     | test_2    |  10960.13      |
+| small     | test_3    |  93579.525      |
+| small     | test_4    |  > 20000      |
+
+Theoretically approximating by scaling, `test_4` will approximately take 2500 minutes to execute.
+
+## 2. Recursive Approach
+
+### Method
+
+### Benchmarking
+
+## 3. Recursive Parallelized Approach
+
+### Method
+
+### Benchmarking
