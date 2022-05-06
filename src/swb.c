@@ -3,6 +3,11 @@
 
 #include "swb.h"
 #include "utils.h"
+#include "helper.h"
+
+// Global variables
+Score *matrix;
+int l1, l2;
 
 int score(char a, char b)
 {
@@ -34,8 +39,14 @@ void setScore(Score *v, int x, int y, int score, int dir)
     v->direction = dir;
 }
 
+void recursive_swb(int i, int j)
+{
+
+}
+
 void smith_waterman(int l1, int l2, char *s1, char *s2)
 {
+    timer t;
     printf("\nAligning Input sequences\n");
 
     // Initialize the scoring matrix
@@ -54,6 +65,8 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
     }
 
     // Fill the scoring matrix
+    tick(&t);
+    #ifdef BASELINE
     for (int i = 1; i <= l1; i++)
     {
         for (int j = 1; j <= l2; j++)
@@ -73,6 +86,9 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
             }
         }
     }
+    #else
+    #endif
+    double time = tock(&t);
 
     // Print the scoring matrix
     // printf("\nScoring Matrix\n");
@@ -102,5 +118,6 @@ void smith_waterman(int l1, int l2, char *s1, char *s2)
     //     }
     //     printf("%c %c\n", c1, c2);
     // }
-    printf("\nScore: %d\n", maxScore->score);
+    // printf("\nScore: %d\n", maxScore->score);
+    printf("Time taken: %lf\n", time);
 }

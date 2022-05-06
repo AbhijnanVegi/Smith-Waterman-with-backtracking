@@ -5,6 +5,9 @@
 #include "swb.h"
 #include "utils.h"
 
+char s1[(int)1e8];
+char s2[(int)1e8];
+
 int main(int argc, char *argv[])
 {
     if (argc != 3)
@@ -16,8 +19,8 @@ int main(int argc, char *argv[])
     printf("Smith Waterman with Backtracking\n");
     printf("---------------------------------\n");
 
-    char *s1 = read_fasta(argv[1]);
-    char *s2 = read_fasta(argv[2]);
+    read_fasta(argv[1], s1);
+    read_fasta(argv[2], s2);
 
     // Run alignment algorithm
     smith_waterman(strlen(s1), strlen(s2), s1, s2);

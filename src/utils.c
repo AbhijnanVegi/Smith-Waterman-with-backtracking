@@ -10,39 +10,35 @@ int max(int a, int b)
     return (a > b) ? a : b;
 }
 
-char *read_fasta(char *filename)
+int read_fasta(char *filename, char *seq)
 {
     // Open file
     FILE *fp = fopen(filename, "r");
     if (fp == NULL)
     {
         printf("Error opening file: %s\n", filename);
-        return NULL;
+        return 0;
     }
 
     // Allocate buffers
     int seq_len = 0;
-    char *seq = (char *)malloc(sizeof(char) * (seq_len + 1));
-    seq[0] = '\0';
-    char *buffer = (char *)malloc(sizeof(char) * 81);
 
     // Read file contents into buffer
-    size_t len = 0;
-    ssize_t read;
-    while ((read = getline(&buffer, &len, fp)) != -1)
+    char c;
+    while ((c = getc(fp)) != EOF)
     {
-        // Ignore line if begins with '>'
-        if (buffer[0] == '>')
-            continue;
-        seq = realloc(seq, sizeof(char) * (seq_len + len));
-        // Remove '\n'
-        buffer[read - 1] = '\0';
-        strcat(seq, buffer);
-        seq_len += read;
+        if (c == '>')
+        {
+            // Skip the rest of the line
+            while ((c = getc(fp)) != '\n')
+                ;
+        }
+        else if (c != '\n')
+        {
+            seq[seq_len++] = c;
+        }
     }
 
     // Close file
-    fclose(fp);
-
-    return seq;
+    return seq_len;
 }
