@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -g -O2 -std=c99 -march=native -mtune=native
+CFLAGS=-Wall -g -Og -std=c99 -march=native -mtune=native -fopenmp
 INCLUDES=includes
 OBJECTS=helper.o swb.o utils.o
 V=BASELINE
@@ -11,6 +11,7 @@ main: src/main.c helper.o swb.o utils.o
 
 swb.o : src/swb.c includes/swb.h utils.o helper.o
 	$(CC) $(CFLAGS) -c -o swb.o src/swb.c -I$(INCLUDES) -D$(V)
+
 helper.o: src/helper.c includes/helper.h
 	$(CC) -c -I$(INCLUDES) src/helper.c -o helper.o
 

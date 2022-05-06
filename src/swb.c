@@ -156,7 +156,98 @@ void smith_waterman(char *s1, char *s2)
     double time = tock(&t);
     printf("\nScore: %d\n", maxScore);
     printf("Time taken : %lf ms\n", time);
-#endif
+#elif ADIAG
 
-    // Print the scoring matrix
+    if (l1>l2)
+    {
+        char *temp = s1;
+        s1 = s2;
+        s2 = temp;
+        int temp_l = l1;
+        l1 = l2;
+        l2 = temp_l;
+    }
+
+    int maxScore = 0;
+    int *prev2 = (int *)calloc(max(l1 + 1, l2 + 1), sizeof(int));
+    int *prev1 = (int *)calloc(max(l1 + 1, l2 + 1), sizeof(int));
+    int *curr = (int *)calloc(max(l1 + 1, l2 + 1), sizeof(int));
+
+    tick(&t);
+    for (int i = 0; i < l1 + l2 - 1; i++)
+    {
+        // Number of diagonal cells
+        int diags;
+        if (i + 1 <= min(l1, l2))
+            diags = i + 1;
+        else if (i + 1 > min(l1, l2) && i + 1 <= max(l1, l2))
+            diags = min(l1, l2);
+        else
+            diags = l1 + l2 - i - 1;
+
+        if (i + 1 < min(l1, l2))
+        {
+            #pragma omp parallel for
+            for (int j = 0; j < diags; j++)
+            {
+                int match = prev2[j] + score(s1[i - j], s2[j]);
+                int delete = prev1[j] - GAP_PENALTY;
+                int insert = prev1[j + 1] - GAP_PENALTY;
+
+                curr[j + 1] = max(match, max(delete, insert));
+                if (curr[j + 1] > maxScore)
+                {
+                    maxScore = curr[j + 1];
+                }
+            }
+        }
+        else if (i + 1 == min(l1, l2))
+        {
+            #pragma omp parallel for
+            for (int j = 0; j < diags; j++)
+            {
+                int match = prev2[j] + score(s1[i - j], s2[j]);
+                int delete = prev1[j] - GAP_PENALTY;
+                int insert = prev1[j + 1] - GAP_PENALTY;
+
+                curr[j] = max(match, max(delete, insert));
+                if (curr[j] > maxScore)
+                {
+                    maxScore = curr[j];
+                }
+            }
+        }
+        else
+        {
+            #pragma omp parallel for
+            for (int j = 0; j < diags; j++)
+            {
+                int match = prev2[j + 1] + score(s1[l1 - j -1], s2[l2 - diags + j]);
+                int delete = prev1[j] - GAP_PENALTY;
+                int insert = prev1[j + 1] - GAP_PENALTY;
+
+                curr[j] = max(match, max(delete, insert));
+                if (curr[j] > maxScore)
+                {
+                    maxScore = curr[j];
+                }
+            }
+        }
+
+        // for (int j = 0; j <= diags; j++)
+        // {
+        //     printf("%d ", curr[j]);
+        // }
+        // printf("\n");
+
+        int *t = prev2;
+        prev2 = prev1;
+        prev1 = curr;
+        curr = t;
+    }
+    double time = tock(&t);
+
+    printf("\nScore: %d\n", maxScore);
+    printf("Time taken : %lf ms\n", time);
+#endif
 }

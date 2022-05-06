@@ -5,10 +5,6 @@
 
 #include "utils.h"
 
-int max(int a, int b)
-{
-    return (a > b) ? a : b;
-}
 
 int read_fasta(char *filename, char *seq)
 {
