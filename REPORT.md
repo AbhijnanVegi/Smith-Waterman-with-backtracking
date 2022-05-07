@@ -200,3 +200,5 @@ As we can see, the benchmarking results for the diagonal computation approach is
 | small     | test_3    | 27087.926      |
 | small     | test_4    | > 100000       |
 
+## Performance Comparision
+![graph](bar-graph.png)
