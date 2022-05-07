@@ -158,7 +158,7 @@ void smith_waterman(char *s1, char *s2)
     printf("Time taken : %lf ms\n", time);
 #elif ADIAG
 
-    if (l1>l2)
+    if (l1 > l2)
     {
         char *temp = s1;
         s1 = s2;
@@ -187,7 +187,7 @@ void smith_waterman(char *s1, char *s2)
 
         if (i + 1 < min(l1, l2))
         {
-            #pragma omp parallel for
+#pragma omp parallel for
             for (int j = 0; j < diags; j++)
             {
                 int match = prev2[j] + score(s1[i - j], s2[j]);
@@ -203,7 +203,7 @@ void smith_waterman(char *s1, char *s2)
         }
         else if (i + 1 == min(l1, l2))
         {
-            #pragma omp parallel for
+#pragma omp parallel for
             for (int j = 0; j < diags; j++)
             {
                 int match = prev2[j] + score(s1[i - j], s2[j]);
@@ -219,10 +219,10 @@ void smith_waterman(char *s1, char *s2)
         }
         else
         {
-            #pragma omp parallel for
+#pragma omp parallel for
             for (int j = 0; j < diags; j++)
             {
-                int match = prev2[j + 1] + score(s1[l1 - j -1], s2[l2 - diags + j]);
+                int match = prev2[j + 1] + score(s1[l1 - j - 1], s2[i - l1 + j + 1]);
                 int delete = prev1[j] - GAP_PENALTY;
                 int insert = prev1[j + 1] - GAP_PENALTY;
 
