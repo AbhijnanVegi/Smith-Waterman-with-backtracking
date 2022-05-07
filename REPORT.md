@@ -145,6 +145,9 @@ All execution times are given in ms.
 
 Theoretically approximating by scaling, `test_4` will approximately take 2500 minutes to execute.
 
+### Speedup
+Speedup : $8\times$
+
 ## 2. Diagonal Computation Approach
 
 ### Method
@@ -181,6 +184,9 @@ Theoretically approximating by scaling, `test_4` will approximately take 2500 mi
 
 As we can see, the benchmarking results for the diagonal computation approach is quite similar to the baseline case results, this is because we are essentially performing the same number of computations in both methods, which in turn produces the same results. **The upside** with the diagonal computation approach is that there is scope of **parallelization** along the diagonals, which can significantly reduce the execution times.
 
+### Speedup
+Speedup : $14.67\times$
+
 ## 3. Parallelized Diagonal Computation Approach
 
 ### Method
@@ -199,6 +205,9 @@ As we can see, the benchmarking results for the diagonal computation approach is
 | small     | test_2    | 3210.834       |
 | small     | test_3    | 27087.926      |
 | small     | test_4    | > 100000       |
+
+### Speedup
+Speedup : $21.37\times$
 
 ## Performance Comparision
 ![graph](bar-graph.png)
