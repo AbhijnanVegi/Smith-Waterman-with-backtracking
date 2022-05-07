@@ -71,6 +71,66 @@ void recursive_swb(int i, int j)
 {
 }
 
+int chunk_swb(int i, int j, int p, int q, Score (*matrix)[l2 + 1], char *s1, char *s2)
+{
+    int maxScore = 0;
+    int start = (i - 1)*p - 1;
+    for(int x = start; x < start + p; x++)
+    {
+        int start2 = (j - 1)*q - 1;
+        for(int y = j; y < start2 + q; y++)
+        {
+            int match = matrix[x - 1][y - 1].score + score(s1[x - 1], s2[y - 1]);
+            int delete = matrix[x - 1][y].score - GAP_PENALTY;
+            int insert = matrix[x][y - 1].score - GAP_PENALTY;
+
+            setScore(&matrix[x][y], x, y,
+                     max(match, max(delete, insert)),
+                     (match >= max(delete, insert)) ? DIAGONAL : (delete >= insert) ? HORIZONTAL
+                                                                                    : VERTICAL);
+
+            // checking if this is the highest score so far
+            if (matrix[x][y].score > maxScore)
+            {
+                maxScore = matrix[x][y].score;
+            }
+        }
+    }
+    // printf("MaxScore: %d\n", maxScore);
+    return maxScore;
+}
+
+int chunkwise_swb(int p, int q, int l1, int l2, Score (*matrix)[l2 + 1],char *s1, char *s2)
+{
+    //get bigger and smaller of p and q
+    // int major = p > q ? p : q;
+    // int minor = p > q ? q : p;
+    int maxScore = 0;
+    for(int sum = 2; sum <= l1+l2; sum++)
+    {
+        for(int i = 1; i <= sum - 1; i++)
+        {
+            int j = sum - i;
+            if(i > l1 || j > l2)
+            {
+                continue;
+            }
+            else
+            {
+                int score = chunk_swb(i, j, p, q, matrix, s1, s2);
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                }
+            }
+        }
+    }
+    // printf("maxScore: %d\n", maxScore);
+    return maxScore;
+}
+
+
+
 void smith_waterman(char *s1, char *s2)
 {
     timer t;
@@ -249,5 +309,30 @@ void smith_waterman(char *s1, char *s2)
 
     printf("\nScore: %d\n", maxScore);
     printf("Time taken : %lf ms\n", time);
+#elif CHUNKY    
+    Score(*matrix)[l2 + 1] = (Score(*)[l2 + 1]) malloc(sizeof(Score) * (l1 + 1) * (l2 + 1));
+
+    // Initializing Score pointer that points to the max score
+    
+    for (int i = 0; i <= l1; i++)
+    {
+        matrix[i][0].score = 0;
+    }
+    for (int j = 0; j <= l2; j++)
+    {
+        matrix[0][j].score = 0;
+    }
+    print_mat(l1, l2, (Score *)matrix);
+    tick(&t);
+    int maxScore = chunkwise_swb(1, 1, l1, l2, matrix, s1, s2);
+    double time = tock(&t);
+    printf("\nScoring Matrix\n");
+    print_mat(l1, l2, (Score *)matrix);
+    printf("\nScore: %d\n", maxScore);
+    printf("Time taken : %lf ms\n", time);
+
+// void recursive_swb(int i, int j)
+// {
+// }
 #endif
 }

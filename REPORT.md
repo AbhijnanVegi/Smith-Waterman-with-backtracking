@@ -92,6 +92,8 @@ This gives us the subsequence with the highest similarity score based on the sim
 
 All execution times are given in ms.
 
+1. No flags
+
 | Test Type | Test Name | Execution Time |
 | --------- | --------- | -------------- |
 | small     | test_1    | 2084.279       |
@@ -99,12 +101,19 @@ All execution times are given in ms.
 | small     | test_3    | Segfault       |
 | small     | test_4    | Segfault       |
 
+2. **Flags**: `-Wall -g -O2 -std=c99 -march=native -mtune=native`
+
+| Test Type | Test Name | Execution Time |
+| --------- | --------- | -------------- |
+| small     | test_1    | 1312.946       |
+| small     | test_2    | Segfault       |
+| small     | test_3    | Segfault       |
+| small     | test_4    | Segfault       |
+
 ## Shortcomings of Baseline and Scope for Optimization
 
 - **No parallelization**: Not using multiple cores of your CPU or any SIMD instructions to optimize the execution of the code.
-
-- **Many cache misses**: In the current approach, we are filling in the matrix row major fashion, so for filling in each row, the elements in the current row and the previous row are accessed in the recursive function, which would lead to multiple cache misses, even more so if the row doesnt fit into cache, then each row will get cleared from cache once its computed.
-
+- **Many cache misses**: In the current approach, we are filling in the matrix row major fashion, so for filling in each row, the elements in the current row and the previous row are accessed in the recursive function, which would lead to multiple cache misses, even more so if the row doesn't fit into cache, then each row will get cleared from cache once its computed.
 - **Tracebacking Problem**: Consider the case where the sequences are of size 1MB each ($10^6$ bytes), this implies that the DP matrix we need to calculate the traceback would be of size 1TB, which is an absurd amount of data that is required to be stored. Since each character from the final alignment is dependent on the current row and the previous row, the scope for optimizing the backtracking becomes extremely small as we are required to store all the rows of the matrix in order to not lose any characters from the final alignment.
 
 ## Optimization
@@ -116,23 +125,78 @@ All execution times are given in ms.
 
 ### Benchmarking
 
+1. No flags
+
 | Test Type | Test Name | Execution Time |
 | --------- | --------- | -------------- |
-| small     | test_1    |  347.928      |
-| small     | test_2    |  10960.13      |
-| small     | test_3    |  93579.525      |
-| small     | test_4    |  > 20000      |
+| small     | test_1    | 892.903        |
+| small     | test_2    | 28893.43       |
+| small     | test_3    | 239601.98      |
+| small     | test_4    | > 300000       |
+
+2. **Flags**: `-Wall -g -O2 -std=c99 -march=native -mtune=native`
+
+| Test Type | Test Name | Execution Time |
+| --------- | --------- | -------------- |
+| small     | test_1    | 251.541 |
+| small     | test_2    | 7497.219 |
+| small     | test_3    | 63481.341 |
+| small     | test_4    |  > 100000  |
 
 Theoretically approximating by scaling, `test_4` will approximately take 2500 minutes to execute.
 
-## 2. Recursive Approach
+## 2. Diagonal Computation Approach
 
 ### Method
 
+- Since the DP function requires the value of every $(i,j)$ cell to be dependent on the $(i-1,j), (i,j-1),(i-1,j-1)$ cells, we can see that there is scope for computation along the **diagonal** as shown below:
+
+  Let us take the example where we have to align 2 sequences of size 4 each.
+
+  ![Screenshot_20220507_090447](/home/prerak/Pictures/Screenshot_20220507_090447.png)
+
+  Here, the number in each cell (other than the 0s) represent the order in which their value will be computed. The colors show the diagonals along which the computation is done.
+
+- `maxScore` keeps a track of the maximum score in the matrix.
+
 ### Benchmarking
 
-## 3. Recursive Parallelized Approach
+1. No flags
+
+   | Test Type | Test Name | Execution Time |
+   | --------- | --------- | -------------- |
+   | small     | test_1    | 932.299        |
+   | small     | test_2    | 29521.036      |
+   | small     | test_3    | 245205.252     |
+   | small     | test_4    | > 300000       |
+
+2. **Flags**: `-Wall -g -O2 -std=c99 -march=native -mtune=native`
+
+| Test Type | Test Name | Execution Time |
+| --------- | --------- | -------------- |
+| small     | test_1    | 142.881        |
+| small     | test_2    | 4623.872       |
+| small     | test_3    | 39466.589      |
+| small     | test_4    | > 100000       |
+
+As we can see, the benchmarking results for the diagonal computation approach is quite similar to the baseline case results, this is because we are essentially performing the same number of computations in both methods, which in turn produces the same results. **The upside** with the diagonal computation approach is that there is scope of **parallelization** along the diagonals, which can significantly reduce the execution times.
+
+## 3. Parallelized Diagonal Computation Approach
 
 ### Method
 
+- The method is the same as the diagonal computation approach, but every cell in a diagonal is computed parallelly.
+- A thread is spawned for each cell in the diagonal which performs the computation
+- In the initial diagonals, the work done by each threads is less. As the length of the diagonals get bigger and bigger, the amount of work by each thread increases. 
+
 ### Benchmarking
+
+**Flags**: `-Wall -g -O2 -std=c99 -march=native -mtune=native -fopenmp` 
+
+| Test Type | Test Name | Execution Time |
+| --------- | --------- | -------------- |
+| small     | test_1    | 185.368        |
+| small     | test_2    | 3210.834       |
+| small     | test_3    | 27087.926      |
+| small     | test_4    | > 100000       |
+

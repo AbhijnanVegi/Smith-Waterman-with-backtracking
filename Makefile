@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -g -Og -std=c99 -march=native -mtune=native -fopenmp
+CFLAGS=-Wall -g -O2 -std=c99 -march=native -mtune=native -fopenmp
 INCLUDES=includes
 OBJECTS=helper.o swb.o utils.o
 V=BASELINE
