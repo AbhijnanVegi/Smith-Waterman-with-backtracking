@@ -113,7 +113,6 @@ All execution times are given in ms.
 ## Shortcomings of Baseline and Scope for Optimization
 
 - **No parallelization**: Not using multiple cores of your CPU or any SIMD instructions to optimize the execution of the code.
-- **Many cache misses**: In the current approach, we are filling in the matrix row major fashion, so for filling in each row, the elements in the current row and the previous row are accessed in the recursive function, which would lead to multiple cache misses, even more so if the row doesn't fit into cache, then each row will get cleared from cache once its computed.
 - **Tracebacking Problem**: Consider the case where the sequences are of size 1MB each ($10^6$ bytes), this implies that the DP matrix we need to calculate the traceback would be of size 1TB, which is an absurd amount of data that is required to be stored. Since each character from the final alignment is dependent on the current row and the previous row, the scope for optimizing the backtracking becomes extremely small as we are required to store all the rows of the matrix in order to not lose any characters from the final alignment.
 
 ## Optimization
@@ -209,5 +208,5 @@ Speedup : $14.67\times$
 ### Speedup
 Speedup : $21.37\times$
 
-## Performance Comparision
+## Performance Comparison
 ![graph](bar-graph.png)
